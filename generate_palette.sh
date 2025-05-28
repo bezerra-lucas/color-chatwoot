@@ -377,6 +377,162 @@ replace_colors_in_directory() {
     return 0
 }
 
+# Function to replace specific hex colors throughout a file
+replace_hex_colors_in_file() {
+    local file_path=$1
+    local backup_suffix=${2:-".backup"}
+    
+    if [ ! -f "$file_path" ]; then
+        echo "Error: File '$file_path' not found."
+        return 1
+    fi
+    
+    echo "Replacing specific hex color values in file: $file_path"
+    echo "Searching for exact hex color matches and replacing with generated palette colors"
+    echo ""
+    
+    # Create backup
+    cp "$file_path" "${file_path}${backup_suffix}"
+    echo "Backup created: ${file_path}${backup_suffix}"
+    
+    # Define the specific hex colors to replace with their corresponding shades
+    # Based on the provided color palette
+    declare -A old_color_map=(
+        ["#d1dfdf"]="50"
+        ["#a4d8da"]="75"
+        ["#80c8cb"]="100"
+        ["#47ccd1"]="200"
+        ["#2db3b7"]="300"
+        ["#238b8e"]="400"
+        ["#289fa3"]="500"
+        ["#196366"]="600"
+        ["#144f51"]="700"
+        ["#0f3b3d"]="800"
+        ["#12494d"]="850"
+        ["#0a2728"]="900"
+    )
+    
+    echo "Searching for these specific hex colors:"
+    local replacements_made=0
+    
+    # Process each color mapping
+    for old_hex in "${!old_color_map[@]}"; do
+        local shade="${old_color_map[$old_hex]}"
+        local new_hex="${GENERATED_COLORS[$shade]}"
+        
+        if [ -n "$new_hex" ]; then
+            # Check if the old color exists in the file
+            if grep -q "$old_hex" "$file_path"; then
+                echo "Found $old_hex (shade $shade) → replacing with $new_hex"
+                
+                # Replace all instances of this hex color (case insensitive)
+                # Use both lowercase and uppercase versions
+                local old_hex_lower=$(echo "$old_hex" | tr '[:upper:]' '[:lower:]')
+                local old_hex_upper=$(echo "$old_hex" | tr '[:lower:]' '[:upper:]')
+                
+                sed -i "s/$old_hex_lower/$new_hex/g" "$file_path"
+                sed -i "s/$old_hex_upper/$new_hex/g" "$file_path"
+                
+                ((replacements_made++))
+            else
+                echo "Color $old_hex (shade $shade) not found in file"
+            fi
+        else
+            echo "Warning: No generated color found for shade $shade"
+        fi
+    done
+    
+    echo ""
+    echo "Replacement complete!"
+    echo "Total hex colors replaced: $replacements_made"
+    echo "Modified file: $file_path"
+    echo "Backup available at: ${file_path}${backup_suffix}"
+    
+    # Show a diff of changes
+    echo ""
+    echo "Changes made (showing first 20 lines of diff):"
+    diff -u "${file_path}${backup_suffix}" "$file_path" | head -20
+    
+    return 0
+}
+
+# Function to replace specific hex colors in all CSS files within a directory
+replace_hex_colors_in_directory() {
+    local dir_path=$1
+    local backup_suffix=${2:-".backup"}
+    
+    if [ ! -d "$dir_path" ]; then
+        echo "Error: Directory '$dir_path' not found."
+        return 1
+    fi
+    
+    echo "Processing directory: $dir_path"
+    echo "Looking for CSS files recursively..."
+    echo "Searching for specific hex colors and replacing with generated palette colors"
+    echo ""
+    
+    # Find all CSS files in the directory and subdirectories
+    local css_files=()
+    while IFS= read -r -d '' file; do
+        css_files+=("$file")
+    done < <(find "$dir_path" -type f \( -name "*.css" -o -name "*.scss" -o -name "*.sass" -o -name "*.less" \) -print0)
+    
+    if [ ${#css_files[@]} -eq 0 ]; then
+        echo "No CSS files found in directory '$dir_path'"
+        return 1
+    fi
+    
+    echo "Found ${#css_files[@]} CSS/SCSS/SASS/LESS files:"
+    printf '%s\n' "${css_files[@]}"
+    echo ""
+    
+    # Ask for confirmation
+    read -p "Do you want to proceed with replacing hex colors in all these files? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Operation cancelled."
+        return 0
+    fi
+    
+    local total_files_processed=0
+    local failed_files=()
+    
+    # Process each file
+    for file in "${css_files[@]}"; do
+        echo "=========================================="
+        echo "Processing file: $file"
+        echo "=========================================="
+        
+        # Process the file
+        if replace_hex_colors_in_file "$file" "$backup_suffix"; then
+            ((total_files_processed++))
+        else
+            failed_files+=("$file")
+        fi
+        
+        echo ""
+    done
+    
+    # Summary
+    echo "=========================================="
+    echo "DIRECTORY PROCESSING COMPLETE"
+    echo "=========================================="
+    echo "Total CSS files found: ${#css_files[@]}"
+    echo "Files successfully processed: $total_files_processed"
+    echo "Files failed: ${#failed_files[@]}"
+    
+    if [ ${#failed_files[@]} -gt 0 ]; then
+        echo "Failed files:"
+        printf '  %s\n' "${failed_files[@]}"
+    fi
+    
+    echo ""
+    echo "All modified files have backup copies with '$backup_suffix' extension."
+    echo "You can restore any file using: cp filename${backup_suffix} filename"
+    
+    return 0
+}
+
 # Function to generate palette (original functionality)
 generate_palette() {
     local base_color=$1

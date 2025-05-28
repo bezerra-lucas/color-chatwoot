@@ -1352,18 +1352,18 @@ body.dark {
     --white-transparent: hsla(0, 0%, 100%, 0.9);
     --black-transparent: rgba(0, 0, 0, 0.9);
     --w-25: #fff;
-    --w-50: #d1dfdf;
-    --w-75: #a4d8da;
-    --w-100: #80c8cb;
-    --w-200: #47ccd1;
-    --w-300: #2db3b7;
-    --w-400: #238b8e;
-    --w-500: #289fa3;
-    --w-600: #196366;
-    --w-700: #144f51;
-    --w-800: #0f3b3d;
-    --W-850: #12494d;
-    --w-900: #0a2728;
+    --w-50: #dbf0f0;
+    --w-75: #b8e0e2;
+    --w-100: #94d0d3;
+    --w-200: #70c1c4;
+    --w-300: #4cb2b5;
+    --w-400: #37a9ad;
+    --w-500: #29a2a7;
+    --w-600: #238c90;
+    --w-700: #1d767a;
+    --w-800: #175f63;
+    --W-850: #370511;
+    --w-900: #0c3236;
     --g-50: #e6f8e6;
     --g-100: #c4eec2;
     --g-200: #9de29a;
@@ -1390,7 +1390,7 @@ body.dark {
     --s-100: #e4ebf1;
     --s-200: #c9d7e3;
     --s-300: #aec3d5;
-    --s-400: #289fa3;
+    --s-400: #29a2a7;
     --s-500: #779bbb;
     --s-600: #446888;
     --s-700: #37546d;
@@ -1679,8 +1679,8 @@ body.dark {
 }
 
 .mx-btn:hover {
-    border-color: #289fa3;
-    color: #289fa3
+    border-color: #29a2a7;
+    color: #29a2a7
 }
 
 .mx-btn-text {
@@ -1954,7 +1954,7 @@ body.dark {
 
 .mx-calendar-content .cell.active {
     color: #fff;
-    background-color: #289fa3
+    background-color: #29a2a7
 }
 
 .mx-calendar-content .cell.hover-in-range,
@@ -2097,7 +2097,7 @@ body.dark {
 }
 
 .mx-time-column .mx-time-item.active {
-    color: #289fa3;
+    color: #29a2a7;
     background-color: transparent;
     font-weight: 700
 }
@@ -2121,7 +2121,7 @@ body.dark {
 }
 
 .mx-time-option.active {
-    color: #289fa3;
+    color: #29a2a7;
     background-color: transparent;
     font-weight: 700
 }
@@ -10828,7 +10828,7 @@ button:disabled {
 }
 
 .outline-woot-200 {
-    outline-color: #47ccd1
+    outline-color: #70c1c4
 }
 
 .outline-woot-200\/50 {
@@ -10836,7 +10836,7 @@ button:disabled {
 }
 
 .outline-woot-500 {
-    outline-color: #289fa3
+    outline-color: #29a2a7
 }
 
 .ring {
@@ -18116,7 +18116,7 @@ table {
 }
 
 .focus\:outline-woot-500:focus {
-    outline-color: #289fa3
+    outline-color: #29a2a7
 }
 
 .focus\:ring:focus {
@@ -18195,11 +18195,11 @@ table {
 }
 
 .focus-visible\:outline-woot-500:focus-visible {
-    outline-color: #289fa3
+    outline-color: #29a2a7
 }
 
 .focus-visible\:outline-woot-600:focus-visible {
-    outline-color: #196366
+    outline-color: #238c90
 }
 
 .active\:border-transparent:active {
@@ -19917,7 +19917,7 @@ table {
 }
 
 :is(.dark .dark\:outline-woot-700) {
-    outline-color: #144f51
+    outline-color: #1d767a
 }
 
 :is(.dark .dark\:outline-woot-700\/80) {
@@ -20275,7 +20275,7 @@ table {
 }
 
 :is(.dark .dark\:focus\:outline-woot-500:focus) {
-    outline-color: #289fa3
+    outline-color: #29a2a7
 }
 
 :is(.dark .dark\:focus\:ring-slate-700:focus) {
@@ -23059,3 +23059,4 @@ fieldset[disabled] .multiselect {
     border-left: 0
 }
 
+/app/public/packs/css #
