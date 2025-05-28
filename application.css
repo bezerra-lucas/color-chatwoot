@@ -1352,18 +1352,18 @@ body.dark {
     --white-transparent: hsla(0, 0%, 100%, 0.9);
     --black-transparent: rgba(0, 0, 0, 0.9);
     --w-25: #fff;
-    --w-50: #e2cfd4;
-    --w-75: #e59aac;
-    --w-100: #da718a;
-    --w-200: #ed2c5a;
-    --w-300: #d31240;
-    --w-400: #a40e32;
-    --w-500: #d6607c;
-    --w-600: #750a24;
-    --w-700: #5e081d;
-    --w-800: #460615;
+    --w-50: #d1dfdf;
+    --w-75: #a4d8da;
+    --w-100: #80c8cb;
+    --w-200: #47ccd1;
+    --w-300: #2db3b7;
+    --w-400: #238b8e;
+    --w-500: #289fa3;
+    --w-600: #196366;
+    --w-700: #144f51;
+    --w-800: #0f3b3d;
     --W-850: #12494d;
-    --w-900: #2f040e;
+    --w-900: #0a2728;
     --g-50: #e6f8e6;
     --g-100: #c4eec2;
     --g-200: #9de29a;
@@ -1390,7 +1390,7 @@ body.dark {
     --s-100: #e4ebf1;
     --s-200: #c9d7e3;
     --s-300: #aec3d5;
-    --s-400: #d6607c;
+    --s-400: #289fa3;
     --s-500: #779bbb;
     --s-600: #446888;
     --s-700: #37546d;
@@ -1679,8 +1679,8 @@ body.dark {
 }
 
 .mx-btn:hover {
-    border-color: #d6607c;
-    color: #d6607c
+    border-color: #289fa3;
+    color: #289fa3
 }
 
 .mx-btn-text {
@@ -1954,7 +1954,7 @@ body.dark {
 
 .mx-calendar-content .cell.active {
     color: #fff;
-    background-color: #d6607c
+    background-color: #289fa3
 }
 
 .mx-calendar-content .cell.hover-in-range,
@@ -2097,7 +2097,7 @@ body.dark {
 }
 
 .mx-time-column .mx-time-item.active {
-    color: #d6607c;
+    color: #289fa3;
     background-color: transparent;
     font-weight: 700
 }
@@ -2121,7 +2121,7 @@ body.dark {
 }
 
 .mx-time-option.active {
-    color: #d6607c;
+    color: #289fa3;
     background-color: transparent;
     font-weight: 700
 }
@@ -10828,7 +10828,7 @@ button:disabled {
 }
 
 .outline-woot-200 {
-    outline-color: #ed2c5a
+    outline-color: #47ccd1
 }
 
 .outline-woot-200\/50 {
@@ -10836,7 +10836,7 @@ button:disabled {
 }
 
 .outline-woot-500 {
-    outline-color: #d6607c
+    outline-color: #289fa3
 }
 
 .ring {
@@ -18116,7 +18116,7 @@ table {
 }
 
 .focus\:outline-woot-500:focus {
-    outline-color: #d6607c
+    outline-color: #289fa3
 }
 
 .focus\:ring:focus {
@@ -18195,11 +18195,11 @@ table {
 }
 
 .focus-visible\:outline-woot-500:focus-visible {
-    outline-color: #d6607c
+    outline-color: #289fa3
 }
 
 .focus-visible\:outline-woot-600:focus-visible {
-    outline-color: #750a24
+    outline-color: #196366
 }
 
 .active\:border-transparent:active {
@@ -19917,7 +19917,7 @@ table {
 }
 
 :is(.dark .dark\:outline-woot-700) {
-    outline-color: #5e081d
+    outline-color: #144f51
 }
 
 :is(.dark .dark\:outline-woot-700\/80) {
@@ -20275,7 +20275,7 @@ table {
 }
 
 :is(.dark .dark\:focus\:outline-woot-500:focus) {
-    outline-color: #d6607c
+    outline-color: #289fa3
 }
 
 :is(.dark .dark\:focus\:ring-slate-700:focus) {
