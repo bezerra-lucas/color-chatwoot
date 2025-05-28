@@ -179,7 +179,6 @@ SHADE_600=""
 SHADE_700=""
 SHADE_800=""
 SHADE_900=""
-SHADE_850=""
 
 # Function to get color by shade
 get_color_by_shade() {
@@ -196,7 +195,6 @@ get_color_by_shade() {
         600) echo "$SHADE_600" ;;
         700) echo "$SHADE_700" ;;
         800) echo "$SHADE_800" ;;
-        850) echo "$SHADE_850" ;;
         900) echo "$SHADE_900" ;;
         *) echo "" ;;
     esac
@@ -219,7 +217,6 @@ set_color_by_shade() {
         700) SHADE_700="$color" ;;
         800) SHADE_800="$color" ;;
         900) SHADE_900="$color" ;;
-        850) SHADE_850="$color" ;;
     esac
 }
 
@@ -238,7 +235,6 @@ get_lightness_by_shade() {
         600) echo "25" ;;
         700) echo "20" ;;
         800) echo "15" ;;
-        850) echo "12" ;;
         900) echo "10" ;;
         *) echo "50" ;;
     esac
@@ -259,7 +255,7 @@ generate_palette_colors() {
     base_l=$(echo $hsl | cut -d' ' -f3)
     
     # Generate each shade and store in global variables
-    for shade in 25 50 75 100 200 300 400 500 600 700 800 850 900; do
+    for shade in 25 50 75 100 200 300 400 500 600 700 800 900; do
         if [ "$shade" = "500" ]; then
             target_l=$base_l
         else
@@ -506,7 +502,7 @@ generate_palette() {
     echo "/* $prefix Color Palette - Generated from $base_color */"
     
     # Generate each shade
-    for shade in 25 50 75 100 200 300 400 500 600 700 800 850 900; do
+    for shade in 25 50 75 100 200 300 400 500 600 700 800 900; do
         new_hex=$(get_color_by_shade "$shade")
         echo "    --$prefix-$shade: $new_hex;"
     done
@@ -516,13 +512,181 @@ generate_palette() {
     echo "/* Add these to your CSS */"
     
     # Generate utility classes
-    for shade in 25 50 75 100 200 300 400 500 600 700 800 850 900; do
+    for shade in 25 50 75 100 200 300 400 500 600 700 800 900; do
         new_hex=$(get_color_by_shade "$shade")
         echo ".bg-$prefix-$shade { background-color: $new_hex; }"
         echo ".text-$prefix-$shade { color: $new_hex; }"
         echo ".border-$prefix-$shade { border-color: $new_hex; }"
     done
 }
+
+# Function to show usage
+show_usage() {
+    echo "Usage: $0 <base_color> [prefix] [--replace file_path old_prefix] [--replace-dir dir_path old_prefix] [--replace-hex-colors file_path] [--replace-hex-colors-dir dir_path]"
+    echo ""
+    echo "Arguments:"
+    echo "  base_color  Base color in hex format (e.g., #29a2a7 or 29a2a7)"
+    echo "  prefix      Optional prefix for CSS variables (default: 'custom')"
+    echo ""
+    echo "Options:"
+    echo "  --replace file_path old_prefix"
+    echo "              Replace existing color VALUES in the specified file"
+    echo "              file_path: Path to the CSS file to modify"
+    echo "              old_prefix: Existing prefix to find (e.g., 'w' for --w-500)"
+    echo "              Note: Variable names stay the same, only color values change"
+    echo ""
+    echo "  --replace-dir dir_path old_prefix"
+    echo "              Replace existing color VALUES in ALL CSS files within directory"
+    echo "              dir_path: Path to directory containing CSS files (searches recursively)"
+    echo "              old_prefix: Existing prefix to find (e.g., 'w' for --w-500)"
+    echo "              Supports: .css, .scss, .sass, .less files"
+    echo "              Note: Variable names stay the same, only color values change"
+    echo ""
+    echo "  --replace-hex-colors file_path"
+    echo "              Replace specific hex color values throughout the file"
+    echo "              file_path: Path to the CSS file to modify"
+    echo "              Replaces these exact hex colors with generated palette:"
+    echo "              #d1dfdf, #a4d8da, #80c8cb, #47ccd1, #2db3b7, #238b8e,"
+    echo "              #289fa3, #196366, #144f51, #0f3b3d, #12494d, #0a2728"
+    echo ""
+    echo "  --replace-hex-colors-dir dir_path"
+    echo "              Replace specific hex color values in ALL CSS files within directory"
+    echo "              dir_path: Path to directory containing CSS files (searches recursively)"
+    echo "              Supports: .css, .scss, .sass, .less files"
+    echo "              Replaces the same specific hex colors as --replace-hex-colors"
+    echo ""
+    echo "Examples:"
+    echo "  # Generate palette only"
+    echo "  $0 '#29a2a7' woot"
+    echo "  $0 '3b82f6' blue"
+    echo ""
+    echo "  # Generate palette and replace color values in single file"
+    echo "  $0 '#29a2a7' custom --replace application.css w"
+    echo "  $0 '#3b82f6' custom --replace styles.css theme"
+    echo ""
+    echo "  # Generate palette and replace color values in all CSS files in directory"
+    echo "  $0 '#29a2a7' custom --replace-dir ./src w"
+    echo "  $0 '#3b82f6' custom --replace-dir ./styles theme"
+    echo "  $0 '#10b981' custom --replace-dir . woot"
+    echo ""
+    echo "  # Generate palette and replace specific hex colors in single file"
+    echo "  $0 '#29a2a7' custom --replace-hex-colors application.css"
+    echo "  $0 '#3b82f6' custom --replace-hex-colors styles.css"
+    echo ""
+    echo "  # Generate palette and replace specific hex colors in all CSS files in directory"
+    echo "  $0 '#29a2a7' custom --replace-hex-colors-dir ./src"
+    echo "  $0 '#3b82f6' custom --replace-hex-colors-dir ."
+    echo ""
+    echo "This script generates a complete color palette based on the woot color"
+    echo "structure found in the CSS file, using your base color as the 500 shade."
+    echo ""
+    echo "When using --replace or --replace-dir, the script will:"
+    echo "1. Generate a new color palette from your base color"
+    echo "2. Find all CSS variables with the old prefix (e.g., --w-500, --w-600)"
+    echo "3. Replace ONLY the color values, keeping variable names unchanged"
+    echo "4. Create backups of all modified files (.backup extension)"
+    echo "5. Show a summary of all changes made"
+    echo ""
+    echo "When using --replace-hex-colors or --replace-hex-colors-dir, the script will:"
+    echo "1. Generate a new color palette from your base color"
+    echo "2. Find all instances of specific hex colors throughout the file(s)"
+    echo "3. Replace those hex colors with corresponding colors from the new palette"
+    echo "4. Create backups of all modified files (.backup extension)"
+    echo "5. Show a summary of all changes made"
+    echo ""
+    echo "Note: This is a POSIX-compliant shell script that works with /bin/sh"
+}
+
+# Main script logic
+if [ $# -eq 0 ]; then
+    show_usage
+    exit 1
+fi
+
+base_color=$1
+prefix=${2:-"custom"}
+
+# Validate hex color format
+case $base_color in
+    \#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])
+        # Valid hex with #
+        ;;
+    [0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])
+        # Valid hex without #
+        ;;
+    *)
+        echo "Error: Invalid hex color format. Please use format like #29a2a7 or 29a2a7"
+        exit 1
+        ;;
+esac
+
+# Check for replace options
+if [ "$3" = "--replace" ]; then
+    if [ $# -lt 5 ]; then
+        echo "Error: --replace option requires file_path and old_prefix arguments"
+        echo ""
+        show_usage
+        exit 1
+    fi
+    
+    file_path=$4
+    old_prefix=$5
+    
+    # Generate colors first
+    generate_palette_colors "$base_color" "$prefix"
+    
+    # Then replace in file (prefix parameter is ignored in replacement mode)
+    replace_colors_in_file "$file_path" "$old_prefix" "$prefix"
+elif [ "$3" = "--replace-dir" ]; then
+    if [ $# -lt 5 ]; then
+        echo "Error: --replace-dir option requires dir_path and old_prefix arguments"
+        echo ""
+        show_usage
+        exit 1
+    fi
+    
+    dir_path=$4
+    old_prefix=$5
+    
+    # Generate colors first
+    generate_palette_colors "$base_color" "$prefix"
+    
+    # Then replace in directory (prefix parameter is ignored in replacement mode)
+    replace_colors_in_directory "$dir_path" "$old_prefix" "$prefix"
+elif [ "$3" = "--replace-hex-colors" ]; then
+    if [ $# -lt 4 ]; then
+        echo "Error: --replace-hex-colors option requires file_path argument"
+        echo ""
+        show_usage
+        exit 1
+    fi
+    
+    file_path=$4
+    
+    # Generate colors first
+    generate_palette_colors "$base_color" "$prefix"
+    
+    # Then replace in file (prefix parameter is ignored in replacement mode)
+    replace_hex_colors_in_file "$file_path"
+elif [ "$3" = "--replace-hex-colors-dir" ]; then
+    if [ $# -lt 4 ]; then
+        echo "Error: --replace-hex-colors-dir option requires dir_path argument"
+        echo ""
+        show_usage
+        exit 1
+    fi
+    
+    dir_path=$4
+    
+    # Generate colors first
+    generate_palette_colors "$base_color" "$prefix"
+    
+    # Then replace in directory (prefix parameter is ignored in replacement mode)
+    replace_hex_colors_in_directory "$dir_path"
+else
+    # Generate the palette only
+    generate_palette "$base_color" "$prefix"
+fi
 
 # Function to replace specific hex colors throughout a file
 replace_hex_colors_in_file() {
@@ -726,172 +890,4 @@ replace_hex_colors_in_directory() {
     echo "You can restore any file using: cp filename${backup_suffix} filename"
     
     return 0
-}
-
-# Function to show usage
-show_usage() {
-    echo "Usage: $0 <base_color> [prefix] [--replace file_path old_prefix] [--replace-dir dir_path old_prefix] [--replace-hex-colors file_path] [--replace-hex-colors-dir dir_path]"
-    echo ""
-    echo "Arguments:"
-    echo "  base_color  Base color in hex format (e.g., #29a2a7 or 29a2a7)"
-    echo "  prefix      Optional prefix for CSS variables (default: 'custom')"
-    echo ""
-    echo "Options:"
-    echo "  --replace file_path old_prefix"
-    echo "              Replace existing color VALUES in the specified file"
-    echo "              file_path: Path to the CSS file to modify"
-    echo "              old_prefix: Existing prefix to find (e.g., 'w' for --w-500)"
-    echo "              Note: Variable names stay the same, only color values change"
-    echo ""
-    echo "  --replace-dir dir_path old_prefix"
-    echo "              Replace existing color VALUES in ALL CSS files within directory"
-    echo "              dir_path: Path to directory containing CSS files (searches recursively)"
-    echo "              old_prefix: Existing prefix to find (e.g., 'w' for --w-500)"
-    echo "              Supports: .css, .scss, .sass, .less files"
-    echo "              Note: Variable names stay the same, only color values change"
-    echo ""
-    echo "  --replace-hex-colors file_path"
-    echo "              Replace specific hex color values throughout the file"
-    echo "              file_path: Path to the CSS file to modify"
-    echo "              Replaces these exact hex colors with generated palette:"
-    echo "              #d1dfdf, #a4d8da, #80c8cb, #47ccd1, #2db3b7, #238b8e,"
-    echo "              #289fa3, #196366, #144f51, #0f3b3d, #12494d, #0a2728"
-    echo ""
-    echo "  --replace-hex-colors-dir dir_path"
-    echo "              Replace specific hex color values in ALL CSS files within directory"
-    echo "              dir_path: Path to directory containing CSS files (searches recursively)"
-    echo "              Supports: .css, .scss, .sass, .less files"
-    echo "              Replaces the same specific hex colors as --replace-hex-colors"
-    echo ""
-    echo "Examples:"
-    echo "  # Generate palette only"
-    echo "  $0 '#29a2a7' woot"
-    echo "  $0 '3b82f6' blue"
-    echo ""
-    echo "  # Generate palette and replace color values in single file"
-    echo "  $0 '#29a2a7' custom --replace application.css w"
-    echo "  $0 '#3b82f6' custom --replace styles.css theme"
-    echo ""
-    echo "  # Generate palette and replace color values in all CSS files in directory"
-    echo "  $0 '#29a2a7' custom --replace-dir ./src w"
-    echo "  $0 '#3b82f6' custom --replace-dir ./styles theme"
-    echo "  $0 '#10b981' custom --replace-dir . woot"
-    echo ""
-    echo "  # Generate palette and replace specific hex colors in single file"
-    echo "  $0 '#29a2a7' custom --replace-hex-colors application.css"
-    echo "  $0 '#3b82f6' custom --replace-hex-colors styles.css"
-    echo ""
-    echo "  # Generate palette and replace specific hex colors in all CSS files in directory"
-    echo "  $0 '#29a2a7' custom --replace-hex-colors-dir ./src"
-    echo "  $0 '#3b82f6' custom --replace-hex-colors-dir ."
-    echo ""
-    echo "This script generates a complete color palette based on the woot color"
-    echo "structure found in the CSS file, using your base color as the 500 shade."
-    echo ""
-    echo "When using --replace or --replace-dir, the script will:"
-    echo "1. Generate a new color palette from your base color"
-    echo "2. Find all CSS variables with the old prefix (e.g., --w-500, --w-600)"
-    echo "3. Replace ONLY the color values, keeping variable names unchanged"
-    echo "4. Create backups of all modified files (.backup extension)"
-    echo "5. Show a summary of all changes made"
-    echo ""
-    echo "When using --replace-hex-colors or --replace-hex-colors-dir, the script will:"
-    echo "1. Generate a new color palette from your base color"
-    echo "2. Find all instances of specific hex colors throughout the file(s)"
-    echo "3. Replace those hex colors with corresponding colors from the new palette"
-    echo "4. Create backups of all modified files (.backup extension)"
-    echo "5. Show a summary of all changes made"
-    echo ""
-    echo "Note: This is a POSIX-compliant shell script that works with /bin/sh"
-}
-
-# Main script logic
-if [ $# -eq 0 ]; then
-    show_usage
-    exit 1
-fi
-
-base_color=$1
-prefix=${2:-"custom"}
-
-# Validate hex color format
-case $base_color in
-    \#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])
-        # Valid hex with #
-        ;;
-    [0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])
-        # Valid hex without #
-        ;;
-    *)
-        echo "Error: Invalid hex color format. Please use format like #29a2a7 or 29a2a7"
-        exit 1
-        ;;
-esac
-
-# Check for replace options
-if [ "$3" = "--replace" ]; then
-    if [ $# -lt 5 ]; then
-        echo "Error: --replace option requires file_path and old_prefix arguments"
-        echo ""
-        show_usage
-        exit 1
-    fi
-    
-    file_path=$4
-    old_prefix=$5
-    
-    # Generate colors first
-    generate_palette_colors "$base_color" "$prefix"
-    
-    # Then replace in file (prefix parameter is ignored in replacement mode)
-    replace_colors_in_file "$file_path" "$old_prefix" "$prefix"
-elif [ "$3" = "--replace-dir" ]; then
-    if [ $# -lt 5 ]; then
-        echo "Error: --replace-dir option requires dir_path and old_prefix arguments"
-        echo ""
-        show_usage
-        exit 1
-    fi
-    
-    dir_path=$4
-    old_prefix=$5
-    
-    # Generate colors first
-    generate_palette_colors "$base_color" "$prefix"
-    
-    # Then replace in directory (prefix parameter is ignored in replacement mode)
-    replace_colors_in_directory "$dir_path" "$old_prefix" "$prefix"
-elif [ "$3" = "--replace-hex-colors" ]; then
-    if [ $# -lt 4 ]; then
-        echo "Error: --replace-hex-colors option requires file_path argument"
-        echo ""
-        show_usage
-        exit 1
-    fi
-    
-    file_path=$4
-    
-    # Generate colors first
-    generate_palette_colors "$base_color" "$prefix"
-    
-    # Then replace in file (prefix parameter is ignored in replacement mode)
-    replace_hex_colors_in_file "$file_path"
-elif [ "$3" = "--replace-hex-colors-dir" ]; then
-    if [ $# -lt 4 ]; then
-        echo "Error: --replace-hex-colors-dir option requires dir_path argument"
-        echo ""
-        show_usage
-        exit 1
-    fi
-    
-    dir_path=$4
-    
-    # Generate colors first
-    generate_palette_colors "$base_color" "$prefix"
-    
-    # Then replace in directory (prefix parameter is ignored in replacement mode)
-    replace_hex_colors_in_directory "$dir_path"
-else
-    # Generate the palette only
-    generate_palette "$base_color" "$prefix"
-fi 
+} 
